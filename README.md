@@ -1,7 +1,7 @@
 ![Tebex Logo](https://www.tebex.io/_nuxt/logo.BCN2mLkL.svg)
 # Tebex C# SDK Tests
 
-These are the unit tests for our [Tebex C# SDK](https://github.com/tebexio/Tebex-CSharp.Tests). This can be used to test that your integration and store is working properly.
+These are the unit tests for our [Tebex C# SDK](https://github.com/tebexio/Tebex-CSharp). This can be used to test that your integration and store is working properly.
 
 ## Setup and running
 
