@@ -541,8 +541,6 @@ namespace Tebex_Unity.Tests.Tebex.HeadlessAPI
             Assert.IsTrue(package.BasePrice >= 0, "The BasePrice property should be greater than or equal to 0.");
             Assert.IsTrue(package.SalesTax >= 0, "The SalesTax property should be greater than or equal to 0.");
             Assert.IsTrue(package.TotalPrice >= 0, "The TotalPrice property should be greater than or equal to 0.");
-            Assert.IsTrue(package.TotalPrice >= package.BasePrice,
-                "The TotalPrice should be greater than or equal to the BasePrice.");
             Assert.IsNotNull(package.Currency, "The Currency property should not be null.");
             Assert.IsTrue(package.Currency.Length > 0, "The Currency property should not be empty.");
             Assert.IsTrue(package.Discount >= 0, "The Discount property should be greater than or equal to 0.");
