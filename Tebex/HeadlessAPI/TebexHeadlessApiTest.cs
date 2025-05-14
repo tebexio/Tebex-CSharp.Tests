@@ -14,11 +14,15 @@ namespace Tebex_Unity.Tests.Tebex.HeadlessAPI
         TebexHeadlessApi headless;
         private static TaskCompletionSource<bool> completion;
         private static string TestPublicToken = "t66x-7cd928b1e9399909e6810edac6dc1fd1eefc57cb";
+        private static string TestPrivateKey = "your-private-key";
         private static string TestGiftCardCode = "1234567890";
         private static string TestCreatorCode = "TebexDev";
         private static string TestUsername = "TebexDev";
+        private static long TestUsernameId = 76561198042467022;
         private static string TestEmail = "tebex-integrations@overwolf.com";
         private static string TestCoupon = "Academy10";
+        private static int TestUpgradeTeirPackageId = 6834822;
+        private static int TestTierId = 40796;
         
         Action<HeadlessApiError> _defaultTestApiError = apiError =>
         {
@@ -63,6 +67,7 @@ namespace Tebex_Unity.Tests.Tebex.HeadlessAPI
         public void TestSetup()
         {
             headless = TebexHeadlessApi.Initialize(new SystemHeadlessAdapter(), TestPublicToken);
+            headless.SetPrivateKey(TestPrivateKey);
             completion = new TaskCompletionSource<bool>();
         }
         
@@ -454,6 +459,48 @@ namespace Tebex_Unity.Tests.Tebex.HeadlessAPI
                         }, _defaultTestApiError, _defaultTestServerError);
                     }, _defaultTestApiError, _defaultTestServerError);
                 }, _defaultTestApiError, _defaultTestServerError);
+            }, _defaultTestApiError, _defaultTestServerError));
+        }
+        
+        [TestMethod]
+        public void TestGetTieredCategoriesForUser()
+        {
+            TestCompletableFuture(headless.GetTieredCategoriesForUser(TestUsernameId, categories =>
+            {
+                var foundTier = false;
+                foreach (var category in categories.Data)
+                {
+                    if (category.ActiveTier != null)
+                    {
+                        foundTier = true;
+                        // Test tiered category and active tier 
+                        // Assert.IsTrue(category.Tiered, "The category is tiered."); TODO
+                        Assert.IsTrue(category.ActiveTier.Id > 0);
+                        Assert.IsTrue(category.ActiveTier.Id > 0, "The active tier ID is valid (> 0).");
+                        Assert.IsTrue(category.ActiveTier.Active);
+                        TestPackage(category.ActiveTier.Package);
+                        Assert.IsTrue(category.ActiveTier.CreatedAt.Length > 0);
+                        Assert.IsTrue(category.ActiveTier.UsernameId > 0);
+                        Assert.IsTrue(category.ActiveTier.NextPaymentDate.Length > 0);
+                        Assert.IsTrue(category.ActiveTier.Status != null);
+                        Assert.IsTrue(category.ActiveTier.RecurringPaymentReference.Length > 0);
+                        completion.SetResult(true);
+                    }
+                }
+
+                if (!foundTier)
+                {
+                    completion.SetException(new Exception("No tiers found for the user."));
+                }
+            }, _defaultTestApiError, _defaultTestServerError));
+        }
+        
+        [TestMethod]
+        public void TestUpdateTier()
+        {
+            TestCompletableFuture(headless.UpdateTier(TestTierId, TestUpgradeTeirPackageId, categories =>
+            {
+                completion.SetResult(true);
             }, _defaultTestApiError, _defaultTestServerError));
         }
         
